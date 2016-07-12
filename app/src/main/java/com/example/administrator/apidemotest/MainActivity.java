@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private MyAdapter adapter;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,20 +29,6 @@ public class MainActivity extends AppCompatActivity {
         adapter=new MyAdapter(this);
         listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if ( scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE )
-                {
-                    listView.invalidateViews();
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
-        });
     }
 
     private class MyAdapter extends BaseAdapter{
@@ -66,7 +53,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return new ItemView(mContext);
+            ItemView view= (ItemView) convertView;
+            if (view==null){
+                view=new ItemView(mContext);
+            }
+            Log.w("getView", position+","+view );
+            return view;
         }
     }
 }

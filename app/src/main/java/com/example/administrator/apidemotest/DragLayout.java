@@ -14,6 +14,7 @@ public class DragLayout extends LinearLayout {
     private ViewDragHelper mDragger;
     public DragLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setFocusable(true);
         mDragger = ViewDragHelper.create(this, 1.0f, new ViewDragHelper.Callback() {
             //true表示子view都可以允许拖拽，也可以通过child判断指定那些可以拖拽，那些不可以。
             @Override
