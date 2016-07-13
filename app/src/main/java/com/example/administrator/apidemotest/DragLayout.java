@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class DragLayout extends LinearLayout {
+    OnExpandListener listener;
     private ViewDragHelper mDragger;
     public DragLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,6 +61,8 @@ public class DragLayout extends LinearLayout {
             public void onViewReleased(View releasedChild, float xvel, float yvel) {
                 int detX=releasedChild.getLeft()<=-getChildAt(1).getWidth()/2?-getChildAt(1).getWidth():0;
                 mDragger.settleCapturedViewAt(detX, releasedChild.getTop());//把捕捉到的View位置设置到x,y位置上,
+
+                listener.ExpandListener(detX+"");
                 invalidate();//这方法启动才能调用computeScroll()方法
             }
         });
@@ -106,5 +109,8 @@ public class DragLayout extends LinearLayout {
             mDragger.smoothSlideViewTo(getChildAt(0),0, 0);
             invalidate();
         }
+    }
+    public interface OnExpandListener{
+        public void ExpandListener(String isExpand);
     }
 }

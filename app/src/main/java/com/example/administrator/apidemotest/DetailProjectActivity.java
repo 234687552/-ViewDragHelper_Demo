@@ -26,7 +26,7 @@ public class DetailProjectActivity extends Activity {
         newSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                detailList.invalidate();
+
             }
         });
         detailProject = (ItemView) findViewById(R.id.detail_project);
