@@ -11,8 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class DragLayout extends LinearLayout {
-    OnExpandListener listener;
     private ViewDragHelper mDragger;
+    public boolean isExpand=false;
     public DragLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         setFocusable(true);
@@ -61,8 +61,9 @@ public class DragLayout extends LinearLayout {
             public void onViewReleased(View releasedChild, float xvel, float yvel) {
                 int detX=releasedChild.getLeft()<=-getChildAt(1).getWidth()/2?-getChildAt(1).getWidth():0;
                 mDragger.settleCapturedViewAt(detX, releasedChild.getTop());//把捕捉到的View位置设置到x,y位置上,
-
-                listener.ExpandListener(detX+"");
+                if (detX<0){
+                    isExpand=true;
+                }
                 invalidate();//这方法启动才能调用computeScroll()方法
             }
         });
@@ -72,7 +73,7 @@ public class DragLayout extends LinearLayout {
     public boolean onTouchEvent(MotionEvent event) {
 //        Log.w("onTouchEvent", String.valueOf(event.getAction()));
         mDragger.processTouchEvent(event);//在touch事件发生时候 VDH也处理事件，然后return true让事件继续传递下去
-        return true;
+        return false;
     }
 
 
@@ -105,12 +106,12 @@ public class DragLayout extends LinearLayout {
 
     //展开就关闭右边视图
     public void CloseExpand(){
+        isExpand=false;
         if (getChildAt(0).getLeft()<-10){
             mDragger.smoothSlideViewTo(getChildAt(0),0, 0);
             invalidate();
         }
+
     }
-    public interface OnExpandListener{
-        public void ExpandListener(String isExpand);
-    }
+
 }

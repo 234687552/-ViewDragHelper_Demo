@@ -1,6 +1,7 @@
 package com.example.administrator.apidemotest;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private MyAdapter adapter;
+    private ItemView openItem=null;
 
 
     @Override
@@ -22,16 +24,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
-        adapter=new MyAdapter(this);
+        adapter = new MyAdapter(this);
         listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(adapter);
     }
 
-    private class MyAdapter extends BaseAdapter{
+    private class MyAdapter extends BaseAdapter {
         private Context mContext;
-        public  MyAdapter(Context context){
-            mContext=context;
+
+        public MyAdapter(Context context) {
+            mContext = context;
         }
+
         @Override
         public int getCount() {
             return 20;
@@ -48,13 +52,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ItemView view= (ItemView) convertView;
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            ItemView view = (ItemView) convertView;
 
-            if (view==null){
-                view=new ItemView(mContext);
+            if (view == null) {
+                view = new ItemView(mContext);
             }
-            Log.w("getView", position+","+view );
+            final ItemView finalView = view;
+            view.setOnExpandListener(new ItemView.OnExpandListener() {
+                @Override
+                public void ExpandListener(boolean isExpand) {
+                    if (isExpand) {
+                        openItem = finalView;
+                    }
+                }
+            });
             return view;
         }
     }

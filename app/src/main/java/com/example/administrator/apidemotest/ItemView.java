@@ -3,14 +3,18 @@ package com.example.administrator.apidemotest;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 /**
  * 提供设置修改计划，修改
@@ -28,10 +32,9 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
     private TextView time;
     private TextView sumFinish;
 
-
+    private OnExpandListener listener;
     private boolean isClick = true;
     private boolean isEdit = false;
-    private boolean isEditList = false;
 
     public ItemView(Context context) {
         super(context);
@@ -69,7 +72,6 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
         switch (v.getId()) {
             case R.id.action_isfinish:
                 dragLayout.CloseExpand();
@@ -98,8 +100,12 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
                 Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
                 break;
         }
+        if (null!=listener&&event.getAction()==MotionEvent.ACTION_UP&&dragLayout.isExpand){
+            listener.ExpandListener(true);
+        }
         return true;
     }
+
 
     public void forEdit() {
 
@@ -114,5 +120,15 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         checkFinish.setVisibility(VISIBLE);
         contentImg.setVisibility(GONE);
         sumFinish.setText("09:21");
+    }
+    public void closeExpand(){
+        dragLayout.CloseExpand();
+    }
+
+    public void setOnExpandListener(OnExpandListener listener){
+        this.listener=listener;
+    }
+    public interface OnExpandListener{
+        public void ExpandListener(boolean isExpand);
     }
 }
