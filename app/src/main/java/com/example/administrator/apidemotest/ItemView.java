@@ -10,11 +10,8 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.List;
 
 /**
  * 提供设置修改计划，修改
@@ -35,6 +32,7 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
     private OnExpandListener listener;
     private boolean isClick = true;
     private boolean isEdit = false;
+    public ItemView openItem =null;
 
     public ItemView(Context context) {
         super(context);
@@ -69,9 +67,16 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         actionDelete.setOnTouchListener(this);
     }
 
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+//        Log.w("当前的View", this+"" );
+        if (null!=listener&&openItem !=null&& openItem !=this){
+            openItem.closeExpand();
+            listener.ExpandListener(false);
+            openItem=null;
+            return false;
+        }
+
         switch (v.getId()) {
             case R.id.action_isfinish:
                 dragLayout.CloseExpand();
@@ -101,7 +106,7 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
                 break;
         }
         if (null!=listener&&event.getAction()==MotionEvent.ACTION_UP&&dragLayout.isExpand){
-            listener.ExpandListener(true);
+            listener.ExpandListener(true);//发出通知 我是展开状态
         }
         return true;
     }

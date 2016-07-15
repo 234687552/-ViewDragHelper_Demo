@@ -2,6 +2,15 @@
 
 ![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/result.gif "github")
 
+上一次不良之处：
+
+无法保证只展开一项；原因：滑动展开是Item里面OnTouch处理的，所以难以控制相互独立的其他Item展开关闭；
+
+解决办法：每一个Item设置一个public的OpenItem，判断OptenItem是否与本人相同，不同的话关闭OptenItem；
+			
+		接着每一个Item设置回调 ，监听 Item是否展开，展开就返回给MainActivity，然后借MainActivity的刀把展开的Item传入给listVIew 所有的Item；
+		
+
 学习心得：
 =====
 1.如果在适配器Adpter里面的getView里面直接使用return newItemView（context）的话。
@@ -12,7 +21,7 @@
         }
         
 会导致以下问题：
-	Item的滑动在ListView上下滚动后会失效
+		Item的滑动在ListView上下滚动后会失效
 原因分析：通过在getVIew里面log出
 
 	Log.w("getView", position+","+view );

@@ -1,11 +1,9 @@
 package com.example.administrator.apidemotest;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -43,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return position;
         }
 
         @Override
@@ -59,17 +57,31 @@ public class MainActivity extends AppCompatActivity {
                 view = new ItemView(mContext);
             }
             final ItemView finalView = view;
+            //设置监听子view是否展开，展开的话就让所有的Item都含有展开的Item；
             view.setOnExpandListener(new ItemView.OnExpandListener() {
                 @Override
                 public void ExpandListener(boolean isExpand) {
                     if (isExpand) {
-                        openItem = finalView;
+                        Log.w("zuobianyan", isExpand +"");
+                        for (int i = 0; i < 20; i++) {
+                            if (null!=((ItemView)listView.getChildAt(i))){
+                            ((ItemView)listView.getChildAt(i)).openItem =finalView;
+                            }
+                        }
+                    }else {
+                        Log.w("zuobianyan", isExpand +"");
+                        for (int i = 0; i < 20; i++) {
+                            if (null!=((ItemView)listView.getChildAt(i))){
+                                ((ItemView)listView.getChildAt(i)).openItem =null;
+                            }
+                        }
                     }
                 }
             });
             return view;
         }
     }
+
 }
 
 
