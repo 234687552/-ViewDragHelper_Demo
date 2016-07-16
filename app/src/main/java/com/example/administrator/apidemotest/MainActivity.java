@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private MyAdapter adapter;
-    private ItemView openItem=null;
+    private ItemView openItem = null;
 
 
     @Override
@@ -61,21 +61,13 @@ public class MainActivity extends AppCompatActivity {
             view.setOnExpandListener(new ItemView.OnExpandListener() {
                 @Override
                 public void ExpandListener(boolean isExpand) {
-                    if (isExpand) {
-                        Log.w("zuobianyan", isExpand +"");
-                        for (int i = 0; i < 20; i++) {
-                            if (null!=((ItemView)listView.getChildAt(i))){
-                            ((ItemView)listView.getChildAt(i)).openItem =finalView;
-                            }
-                        }
-                    }else {
-                        Log.w("zuobianyan", isExpand +"");
-                        for (int i = 0; i < 20; i++) {
-                            if (null!=((ItemView)listView.getChildAt(i))){
-                                ((ItemView)listView.getChildAt(i)).openItem =null;
-                            }
+
+                    for (int i = 0; i < 20; i++) {
+                        if (null != ((ItemView) listView.getChildAt(i))) {
+                            ((ItemView) listView.getChildAt(i)).openItem = isExpand ? finalView : null;
                         }
                     }
+
                 }
             });
             return view;

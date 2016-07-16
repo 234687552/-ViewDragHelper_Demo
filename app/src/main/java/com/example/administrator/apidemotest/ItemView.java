@@ -21,8 +21,8 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
     private ImageView contentImg;
     private TextView contentSchedule;
     private LinearLayout actionView;
-    private TextView actionIsfinish;
-    private TextView actionDelete;
+    private ImageView actionIsfinish;
+    private ImageView actionDelete;
     private DragLayout dragLayout;
     private TextView contentScheduleEdit;
     private CheckBox checkFinish;
@@ -59,8 +59,8 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         contentImg = (ImageView) findViewById(R.id.content_img);
         contentSchedule = (TextView) findViewById(R.id.content_schedule);
         actionView = (LinearLayout) findViewById(R.id.action_view);
-        actionIsfinish = (TextView) findViewById(R.id.action_isfinish);
-        actionDelete = (TextView) findViewById(R.id.action_delete);
+        actionIsfinish = (ImageView) findViewById(R.id.action_isfinish);
+        actionDelete = (ImageView) findViewById(R.id.action_delete);
 
         contentView.setOnTouchListener(this);
         actionIsfinish.setOnTouchListener(this);
@@ -69,17 +69,14 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-//        Log.w("当前的View", this+"" );
         if (null!=listener&&openItem !=null&& openItem !=this){
             openItem.closeExpand();
-            listener.ExpandListener(false);
-            openItem=null;
             return false;
         }
 
         switch (v.getId()) {
             case R.id.action_isfinish:
-                dragLayout.CloseExpand();
+                closeExpand();
                 Toast.makeText(getContext(), "finish", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.content_view:
@@ -93,7 +90,7 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
                                 Intent intent = new Intent(getContext(), DetailProjectActivity.class);
                                 getContext().startActivity(intent);
                             } else {
-                                dragLayout.CloseExpand();
+                                closeExpand();
                             }
                         }
                         isClick = true;
@@ -101,12 +98,14 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
                 }
                 break;
             case R.id.action_delete:
-                dragLayout.CloseExpand();
+                closeExpand();
                 Toast.makeText(getContext(), "delete", Toast.LENGTH_SHORT).show();
                 break;
         }
         if (null!=listener&&event.getAction()==MotionEvent.ACTION_UP&&dragLayout.isExpand){
             listener.ExpandListener(true);//发出通知 我是展开状态
+        }else if (event.getAction()==MotionEvent.ACTION_UP&&!dragLayout.isExpand){
+            listener.ExpandListener(false);
         }
         return true;
     }
@@ -127,9 +126,10 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         sumFinish.setText("09:21");
     }
     public void closeExpand(){
+        listener.ExpandListener(false);
         dragLayout.CloseExpand();
     }
-
+    //接口回调让上级知道自己展开还是关闭；
     public void setOnExpandListener(OnExpandListener listener){
         this.listener=listener;
     }

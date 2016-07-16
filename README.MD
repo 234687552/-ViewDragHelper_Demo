@@ -1,14 +1,33 @@
 最终效果：
 
 ![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/result.gif "github")
+7/16
+problem1:
 
+	为了实现滑动删除的效果，需要实现第一个view满屏，滑动出来的view在屏幕外
+
+1.利用linearlayout 第一个match后，第二个view的width用wrap后的宽度为0；只能指定某一个值
+
+2.利用framelayout 能出第二个view，但?一直都在屏幕左上角出现，利用重写onlayout 并无效果，结果view还是在左上角？
+
+现在剩余的方法是：
+
+尝试：在linearlayout方法里面重写onlayout，结果：得出的第二个view宽度还是0；
+
+最后手动指定第二个view的宽度
+
+problem2:
+
+	展开某一个Item后再手动关闭后，其他Item需要点第二次才可以滑动，逻辑问题，已解决；
+
+7/15
 上一次不良之处：
 
 无法保证只展开一项；原因：滑动展开是Item里面OnTouch处理的，所以难以控制相互独立的其他Item展开关闭；
 
 解决办法：每一个Item设置一个public的OpenItem，判断OptenItem是否与本人相同，不同的话关闭OptenItem；
-			
-		接着每一个Item设置回调 ，监听 Item是否展开，展开就返回给MainActivity，然后借MainActivity的刀把展开的Item传入给listVIew 所有的Item；
+
+接着每一个Item设置回调 ，监听 Item是否展开，展开就返回给MainActivity，然后借MainActivity的刀把展开的Item传入给listVIew 所有的Item；
 		
 
 学习心得：

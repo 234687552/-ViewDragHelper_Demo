@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.administrator.apidemotest.MainActivity">
     <ListView
-        android:descendantFocusability="beforeDescendants"
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>
