@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.administrator.apidemotest.R;
 import com.example.administrator.apidemotest.db.ProjectDb;
+import com.example.administrator.apidemotest.dialog.EditDialog;
 import com.example.administrator.apidemotest.dialog.TypeDialog;
 import com.example.administrator.apidemotest.model.Project;
 import com.example.administrator.apidemotest.model.ProjectList;
@@ -81,7 +82,7 @@ public class DetailProjectActivity extends Activity {
         }
         detailIcon.setBackgroundResource(resourceId);
         //listview设置
-        lists = db.getProjectList(projectId);
+        lists = db.getProjectLists(projectId);
         adapter = new MyAdapter(this, lists);
         detailList.setAdapter(adapter);
         //新建一个清单；
@@ -90,14 +91,13 @@ public class DetailProjectActivity extends Activity {
             public void onClick(View v) {
                 if (!TextUtils.isEmpty(listInput.getText())) {
                     ProjectList list = new ProjectList();
-                    Toast.makeText(DetailProjectActivity.this, String.valueOf(listInput.getText()), Toast.LENGTH_SHORT).show();
                     list.setListText(String.valueOf(listInput.getText()));
                     list.setProject_id(projectId);
                     list.setDay(today);
                     list.setTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)*100+Calendar.getInstance().get(Calendar.MINUTE));
                     listInput.setText("");
                     db.saveProjectList(list);
-                    refreshList(projectId);
+                    refreshList();
                 } else {
                     Toast.makeText(DetailProjectActivity.this, "请输入具体清单", Toast.LENGTH_SHORT).show();
                 }
@@ -133,9 +133,9 @@ public class DetailProjectActivity extends Activity {
         });
     }
 
-    private void refreshList(int projectId) {
+    private void refreshList() {
         lists.clear();
-        lists.addAll(db.getProjectList(projectId));
+        lists.addAll(db.getProjectLists(projectId));
         adapter.notifyDataSetChanged();
     }
 
@@ -199,7 +199,7 @@ public class DetailProjectActivity extends Activity {
                 public void onClick(View v) {
                     view.closeExpand();
                     db.deleteProjectList(lists.get(position).getId());
-                    refreshList(projectId);
+                    refreshList();
                 }
             });
             view.findViewById(R.id.action_isfinish).setOnClickListener(new View.OnClickListener() {
@@ -210,9 +210,16 @@ public class DetailProjectActivity extends Activity {
                 }
             });
             view.setList(lists.get(position));
+            view.editDialog.setOnSaveListener(new EditDialog.SaveListener() {
+                @Override
+                public void onSaveListener(boolean save) {
+                    if (save){
+                        refreshList();
+                    }
+                }
+            });
             return view;
         }
-
     }
 }
 

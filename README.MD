@@ -1,21 +1,44 @@
 最终效果：
 
-![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/result.gif "github")
+![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0719pm.gif "github")
+
+历史效果图在screenshots文件夹中
+
+7/19.PM
+
+未完成部分：
+	1.时间修改，2.完成条数未弄 
+
+新问题：
+	清单备注是利用dialogFragment来实现的，新添加两条后，马上删除在添加发现问题；
+	dialogFragment里面的内容还是原来的内容。既是dialogFragment保留旧数据；
+
+网上解决办法以及原因：
+	fragment会保存数据，也会走相应的生命周期方法，这也是dialogfragment能在屏幕翻转时能保持状态的原因。
+	fragmentmanager有自己的内存堆栈管理，show虽然重走了生命周期方法，但还是原来的对象，并由fragment transaction进行恢复。因此，题主想要解决问题，要么重新初始化dialog对象
+	因此，要么重新初始化dialog对象(new)，要么就是在onViewStateRestored()中进行再次初始化一次
+	最后选中了在onViewStateRestored()中进行新数据绑定；
+	
+还没解决问题：
+	新添加的Item不可以马上进行滑动处理，要重新进入别的界面回来才可以
 
 7/19
 
-sql部分大部分已经完成，未完成部分：1.时间修改，2.完成条数未弄 3.清单备注未添加
+sql部分大部分已经完成，未完成部分：
+	1.时间修改，2.完成条数未弄 3.清单备注未添加
 
-遇到问题：新添加的Item不可以进行滑动处理，要重新进入别的activity回来才可以
+遇到问题：
+	新添加的Item不可以进行滑动处理，要重新进入别的界面回来才可以
 	
-分析：新添加的Item还是null，adapter.notifyDataSetChanged()方法并无做非null处理？
+分析：
+	新添加的Item还是null，adapter.notifyDataSetChanged()方法并无做非null处理？
 
 
 7/16
 
 problem1:
 
-	为了实现滑动删除的效果，需要实现第一个view满屏，滑动出来的view在屏幕外
+	为了实现滑动删除的效果，需要实现第一个view满屏，滑动出来的view在屏幕外，如何实现？
 
 1.利用linearlayout 第一个match后，第二个view的width用wrap后的宽度为0；只能指定某一个值
 

@@ -111,6 +111,7 @@ public class ProjectDb {
         values.put("project_id",projectList.getProject_id());
         values.put("is_finish",projectList.getIs_finish());
         values.put("list_text",projectList.getListText());
+        values.put("remark",projectList.getRemark());
         db.insert("List", null, values);
         values.clear();
     }
@@ -130,13 +131,14 @@ public class ProjectDb {
         values.put("project_id",newProjectList.getProject_id());
         values.put("is_finish",newProjectList.getIs_finish());
         values.put("list_text",newProjectList.getListText());
+        values.put("remark",newProjectList.getRemark());
         db.update("List",values,"id=?",new String[]{String.valueOf(id)});
     }
 
     /**
      * 根据project_id读取所有的list
      */
-    public List<ProjectList> getProjectList(int project_id){
+    public List<ProjectList> getProjectLists(int project_id){
         List<ProjectList> projectLists=new ArrayList<ProjectList>();
 
         Cursor cursor = db.query("List", null, "project_id=?", new String[]{String.valueOf(project_id)}, null, null, "is_finish,day,time");
@@ -148,11 +150,32 @@ public class ProjectDb {
                 list.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 list.setProject_id(cursor.getInt(cursor.getColumnIndex("project_id")));
                 list.setListText(cursor.getString(cursor.getColumnIndex("list_text")));
+                list.setRemark(cursor.getString(cursor.getColumnIndex("remark")));
                 list.setTime(cursor.getInt(cursor.getColumnIndex("time")));
                 projectLists.add(list);
             } while (cursor.moveToNext());
         }
         return projectLists;
+    }
+    /**
+     * 根据id读取某一个list
+     */
+    public ProjectList getList(int id){
+        ProjectList list=new ProjectList();
+
+        Cursor cursor = db.query("List", null, "id=?", new String[]{String.valueOf(id)}, null, null, "is_finish,day,time");
+        if (cursor.moveToFirst()){
+            do {
+                list.setIs_finish(cursor.getInt(cursor.getColumnIndex("is_finish")));
+                list.setDay(cursor.getInt(cursor.getColumnIndex("day")));
+                list.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                list.setProject_id(cursor.getInt(cursor.getColumnIndex("project_id")));
+                list.setListText(cursor.getString(cursor.getColumnIndex("list_text")));
+                list.setRemark(cursor.getString(cursor.getColumnIndex("remark")));
+                list.setTime(cursor.getInt(cursor.getColumnIndex("time")));
+            } while (cursor.moveToNext());
+        }
+        return list;
     }
 
     private class ProjectDbOpener extends SQLiteOpenHelper {
@@ -167,6 +190,7 @@ public class ProjectDb {
         String CREATE_LIST = "create table List (" +
                 "id integer primary key autoincrement," +
                 "project_id integer,"+
+                "remark text,"+
                 "day integer,"+
                 "time integer,"+
                 "is_finish integer,"+

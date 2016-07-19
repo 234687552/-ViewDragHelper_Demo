@@ -7,6 +7,17 @@ public class ProjectList {
 
     //日期 e.g 2016122
     private int  day;
+    //清单备注
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    private String remark;
 
     public int getDay() {
         return day;

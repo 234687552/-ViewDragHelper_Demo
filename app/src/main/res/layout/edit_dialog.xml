@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <EditText
+        android:id="@+id/list_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="清单" />
@@ -21,6 +22,7 @@
             android:layout_height="wrap_content"
             android:text="备注：" />
         <ImageView
+            android:id="@+id/save"
             android:layout_alignParentRight="true"
             android:background="@mipmap/finish"
             android:layout_width="wrap_content"
@@ -30,6 +32,7 @@
 
 
     <EditText
+        android:id="@+id/list_remark"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -1,6 +1,7 @@
 package com.example.administrator.apidemotest.view;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
@@ -43,7 +44,7 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
     private int projectId;
     private int listId;
 
-    private EditDialog editDialog;
+    public EditDialog editDialog;
 
     public ItemView(Context context) {
         super(context);
@@ -103,8 +104,16 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
                                 intent.putExtra("project_id", projectId);
                                 getContext().startActivity(intent);
                             } else if (contentView.getLeft() >= 0 && isEdit) {
+                                //进入备注dialog
                                 Activity activity = (Activity) getContext();
-                                editDialog.show(activity.getFragmentManager(), "TypeDialog");
+
+                                editDialog.setListId(listId);
+                                FragmentTransaction ft = activity.getFragmentManager().beginTransaction();
+                                ft.remove( editDialog);
+                                ft.commit();
+                                editDialog.show(activity.getFragmentManager(), "EditDialog");
+//                                Log.w("detailActivity", String.valueOf(editDialog.listText.getText()) + "," + String.valueOf(editDialog.listRemark.getText()));
+
                             } else {
                                 closeExpand();
                             }
@@ -122,6 +131,7 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         }
         return true;
     }
+
     //设置project内容
     public void setProject(Project project) {
         projectId = project.getId();
@@ -131,16 +141,16 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         int resourceId = R.mipmap.icon_all;
         switch (project.getType()) {
             case "所有":
-                resourceId=R.mipmap.icon_all;
+                resourceId = R.mipmap.icon_all;
                 break;
             case "工作":
-                resourceId=R.mipmap.icon_work;
+                resourceId = R.mipmap.icon_work;
                 break;
             case "生活":
-                resourceId=R.mipmap.icon_live;
+                resourceId = R.mipmap.icon_live;
                 break;
             case "学习":
-                resourceId=R.mipmap.icon_study;
+                resourceId = R.mipmap.icon_study;
                 break;
         }
         contentImg.setBackgroundResource(resourceId);
@@ -152,14 +162,20 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
             day = "今天";
         } else if (project.getDay() == today + 1) {
             day = "明天";
+        } else if (project.getDay() / 10000 == c.get(Calendar.YEAR)) {
+            day = String.valueOf(project.getDay()).substring(4, 6) + "月"
+                    + String.valueOf(project.getDay()).substring(6, 8) + "日";
         } else {
-            day = project.getDay() + "";
+            day = String.valueOf(project.getDay()).substring(0, 4) + "年"
+                    + String.valueOf(project.getDay()).substring(4, 6) + "月"
+                    + String.valueOf(project.getDay()).substring(6, 8) + "日";
         }
         this.day.setText(day);
     }
 
     //设置清单list内容
-    public void setList(ProjectList list){
+    public void setList(ProjectList list) {
+        listId=list.getId();
         contentSchedule.setText(list.getListText());
 //        checkFinish.
         String day;
@@ -173,9 +189,9 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
             day = list.getDay() + "";
         }
         //在list视图sumFinish显示当前时间
-        String hour=list.getTime()/100>9?(list.getTime()/100+""):("0"+list.getTime()/100);
-        String min=list.getTime()%100>9?(list.getTime()%100+""):("0"+list.getTime()%100);
-        sumFinish.setText(hour+":"+min);
+        String hour = list.getTime() / 100 > 9 ? (list.getTime() / 100 + "") : ("0" + list.getTime() / 100);
+        String min = list.getTime() % 100 > 9 ? (list.getTime() % 100 + "") : ("0" + list.getTime() % 100);
+        sumFinish.setText(hour + ":" + min);
         this.day.setText(day);
 
     }
