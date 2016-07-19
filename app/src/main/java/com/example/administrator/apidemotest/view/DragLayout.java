@@ -1,18 +1,11 @@
-package com.example.administrator.apidemotest;
+package com.example.administrator.apidemotest.view;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 public class DragLayout extends LinearLayout {
     private ViewDragHelper mDragger;

@@ -1,7 +1,18 @@
 最终效果：
 
 ![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/result.gif "github")
+
+7/19
+
+sql部分大部分已经完成，未完成部分：1.时间修改，2.完成条数未弄 3.清单备注未添加
+
+遇到问题：新添加的Item不可以进行滑动处理，要重新进入别的activity回来才可以
+	
+分析：新添加的Item还是null，adapter.notifyDataSetChanged()方法并无做非null处理？
+
+
 7/16
+
 problem1:
 
 	为了实现滑动删除的效果，需要实现第一个view满屏，滑动出来的view在屏幕外
@@ -18,9 +29,10 @@ problem1:
 
 problem2:
 
-	展开某一个Item后再手动关闭后，其他Item需要点第二次才可以滑动，逻辑问题，已解决；
+	展开某一个Item后再手动关闭后，其他Item需要点第二次才可以滑动，逻辑问题，已解决。
 
 7/15
+
 上一次不良之处：
 
 无法保证只展开一项；原因：滑动展开是Item里面OnTouch处理的，所以难以控制相互独立的其他Item展开关闭；
@@ -46,6 +58,7 @@ problem2:
 	Log.w("getView", position+","+view );
 	
 可以知道滚动后ItemVIew前后的地址是不一致的，从null变成***，估计这是导致原因
+
 解决方法：
 	在return之前先判断是否为null，然后为null的话先实例出一个view即可
 	

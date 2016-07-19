@@ -2,11 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.example.administrator.apidemotest.ItemView
-        android:id="@+id/detail_project"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:background="#eaeaea"
-        android:layout_height="wrap_content"></com.example.administrator.apidemotest.ItemView>
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/detail_icon"
+            android:background="@mipmap/icon_all"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/detail_project"
+            android:layout_gravity="bottom"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
     <TextView
         android:textColor="#03a9f4"
         android:gravity="center"
@@ -14,6 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <ListView
+        android:layout_margin="10dp"
         android:id="@+id/detail_list"
         android:layout_width="match_parent"
         android:layout_weight="1"
@@ -23,6 +36,7 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:id="@+id/list_input"
             android:layout_gravity="bottom"
             android:hint="添加计划清单"
             android:textColorHint="#e3e3e3"
@@ -30,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
         <ImageView
-            android:id="@+id/new_schedule"
+            android:id="@+id/new_list"
             android:background="@mipmap/edit_enter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
