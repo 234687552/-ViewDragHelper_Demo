@@ -1,13 +1,17 @@
 package com.example.administrator.apidemotest.activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -40,6 +44,8 @@ public class DetailProjectActivity extends Activity {
     private int today;
     private EditText listInput;
     private List<ProjectList> lists;
+    private ImageView dataPicker;
+
 
 
     @Override
@@ -48,7 +54,7 @@ public class DetailProjectActivity extends Activity {
         setContentView(R.layout.detail_project);
         //进入记录今天时间
         Calendar c = Calendar.getInstance();
-        today = c.get(Calendar.YEAR) * 10000 + c.get(Calendar.MONTH) * 100 + c.get(Calendar.DAY_OF_MONTH);
+        today = c.get(Calendar.YEAR) * 10000 +(c.get(Calendar.MONTH)+1) * 100 + c.get(Calendar.DAY_OF_MONTH);
 
         db = new ProjectDb(this);
         dialog = new TypeDialog();
@@ -57,6 +63,7 @@ public class DetailProjectActivity extends Activity {
         detailIcon = (ImageView) findViewById(R.id.detail_icon);
         detailProject = (EditText) findViewById(R.id.detail_project);
         listInput = (EditText) findViewById(R.id.list_input);
+        dataPicker = (ImageView) findViewById(R.id.data_picker);
         init();
     }
 
@@ -94,7 +101,7 @@ public class DetailProjectActivity extends Activity {
                     list.setListText(String.valueOf(listInput.getText()));
                     list.setProject_id(projectId);
                     list.setDay(today);
-                    list.setTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)*100+Calendar.getInstance().get(Calendar.MINUTE));
+                    list.setTime(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) * 100 + Calendar.getInstance().get(Calendar.MINUTE));
                     listInput.setText("");
                     db.saveProjectList(list);
                     refreshList();
@@ -131,6 +138,18 @@ public class DetailProjectActivity extends Activity {
                 });
             }
         });
+        dataPicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dpd=new DatePickerDialog(DetailProjectActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        curProject.setDay(year*10000+(monthOfYear+1)*100+dayOfMonth);
+                    }
+                },curProject.getDay()/10000,curProject.getDay()%10000/100-1,curProject.getDay()%10000%100);
+                dpd.show();
+            }
+        });
     }
 
     private void refreshList() {
@@ -144,9 +163,18 @@ public class DetailProjectActivity extends Activity {
     public void onBackPressed() {
         if (!TextUtils.isEmpty(detailProject.getText())) {
             curProject.setProjectText(String.valueOf(detailProject.getText()));
+            curProject.setIs_finish(1);
+            for (int i = 0; i < lists.size(); i++) {
+                if (lists.get(i).getIs_finish()==0){
+                    curProject.setIs_finish(0);
+                }
+            }
             db.updateProject(projectId, curProject);
+            super.onBackPressed();
+        }else {
+            Toast.makeText(DetailProjectActivity.this, "请输入项目事项", Toast.LENGTH_SHORT).show();
         }
-        super.onBackPressed();
+
     }
 
     private class MyAdapter extends BaseAdapter {
@@ -175,7 +203,6 @@ public class DetailProjectActivity extends Activity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-
             final ItemView view;
             if (convertView == null) {
                 view = new ItemView(mContext);
@@ -183,6 +210,7 @@ public class DetailProjectActivity extends Activity {
                 view = (ItemView) convertView;
             }
             view.forEditList();
+            view.setList(lists.get(position));
             //设置监听子view是否展开，展开的话就让所有的Item都含有展开的Item；
             view.setOnExpandListener(new ItemView.OnExpandListener() {
                 @Override
@@ -202,18 +230,18 @@ public class DetailProjectActivity extends Activity {
                     refreshList();
                 }
             });
-            view.findViewById(R.id.action_isfinish).setOnClickListener(new View.OnClickListener() {
+            view.checkFinish.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    Toast.makeText(DetailProjectActivity.this, "finish", Toast.LENGTH_SHORT).show();
-                    view.closeExpand();
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    lists.get(position).setIs_finish(isChecked ? 1 : 0);
+                    db.updateProjectList(lists.get(position).getId(), lists.get(position));
+                    refreshList();
                 }
             });
-            view.setList(lists.get(position));
             view.editDialog.setOnSaveListener(new EditDialog.SaveListener() {
                 @Override
                 public void onSaveListener(boolean save) {
-                    if (save){
+                    if (save) {
                         refreshList();
                     }
                 }

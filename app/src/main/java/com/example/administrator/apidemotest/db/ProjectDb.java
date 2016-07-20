@@ -63,13 +63,13 @@ public class ProjectDb {
         db.update("Project",values,"id=?",new String[]{String.valueOf(id)});
     }
     /**
-     * 根据类型读取所有的project；
+     * 根据类型和完成是否读取所有的project；
      */
-    public List<Project> getProjects(String type){
+    public List<Project> getProjects(String type,int isFinish){
         List<Project> projects=new ArrayList<Project>();
         Cursor cursor = type.equals("所有")?
-                db.query("Project", null, null, null, null, null, "is_finish,day"):
-                db.query("Project", null, "type=?", new String[]{type}, null, null, "is_finish,day");
+                db.query("Project", null, "is_finish=?", new String[]{String.valueOf(isFinish)}, null, null, "day desc,id desc"):
+                db.query("Project", null, "type=? and is_finish=?", new String[]{type,String.valueOf(isFinish)}, null, null, "day desc,id desc");
         if (cursor.moveToFirst()){
             do {
                 Project project=new Project();

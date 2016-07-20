@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,9 +34,9 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
     private ImageView actionDelete;
     private DragLayout dragLayout;
     private TextView contentScheduleEdit;
-    private CheckBox checkFinish;
+    public CheckBox checkFinish;
     private TextView day;
-    private TextView sumFinish;
+    public TextView sumFinish;
 
     private OnExpandListener listener;
     private boolean isClick = true;
@@ -137,6 +138,17 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         projectId = project.getId();
         //设置内容
         contentSchedule.setText(project.getProjectText());
+        if (project.getIs_finish()==1){
+            contentSchedule.setTextColor(Color.parseColor("#eaeaea"));
+            day.setTextColor(Color.parseColor("#eaeaea"));
+            sumFinish.setTextColor(Color.parseColor("#eaeaea"));
+            actionIsfinish.setVisibility(GONE);
+        }else {
+            contentSchedule.setTextColor(Color.parseColor("#000000"));
+            day.setTextColor(Color.parseColor("#5b5b5b"));
+            sumFinish.setTextColor(Color.parseColor("#5b5b5b"));
+            actionIsfinish.setVisibility(VISIBLE);
+        }
         //设置type
         int resourceId = R.mipmap.icon_all;
         switch (project.getType()) {
@@ -155,44 +167,59 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
         }
         contentImg.setBackgroundResource(resourceId);
         //设置时间
-        String day;
+        String curDay;
         Calendar c = Calendar.getInstance();
-        int today = c.get(Calendar.YEAR) * 10000 + c.get(Calendar.MONTH) * 100 + c.get(Calendar.DAY_OF_MONTH);
+        int today = c.get(Calendar.YEAR) * 10000 + (c.get(Calendar.MONTH)+1) * 100 + c.get(Calendar.DAY_OF_MONTH);
         if (project.getDay() == today) {
-            day = "今天";
+            curDay = "今天";
         } else if (project.getDay() == today + 1) {
-            day = "明天";
+            curDay = "明天";
         } else if (project.getDay() / 10000 == c.get(Calendar.YEAR)) {
-            day = String.valueOf(project.getDay()).substring(4, 6) + "月"
-                    + String.valueOf(project.getDay()).substring(6, 8) + "日";
+            curDay = project.getDay() % 10000/100 + "月"
+                    + project.getDay() % 10000%100 + "日";
         } else {
-            day = String.valueOf(project.getDay()).substring(0, 4) + "年"
-                    + String.valueOf(project.getDay()).substring(4, 6) + "月"
-                    + String.valueOf(project.getDay()).substring(6, 8) + "日";
+            curDay = project.getDay() / 10000 + "年"
+                    + project.getDay() % 10000/100 + "月"
+                    + project.getDay() % 10000%100 + "日";
         }
-        this.day.setText(day);
+        day.setText(curDay);
     }
 
     //设置清单list内容
     public void setList(ProjectList list) {
         listId=list.getId();
         contentSchedule.setText(list.getListText());
-//        checkFinish.
-        String day;
+        if (list.getIs_finish()==1){
+            contentSchedule.setTextColor(Color.parseColor("#eaeaea"));
+            day.setTextColor(Color.parseColor("#eaeaea"));
+            sumFinish.setTextColor(Color.parseColor("#eaeaea"));
+            checkFinish.setChecked(true);
+        }else {
+            contentSchedule.setTextColor(Color.parseColor("#000000"));
+            day.setTextColor(Color.parseColor("#5b5b5b"));
+            sumFinish.setTextColor(Color.parseColor("#5b5b5b"));
+            checkFinish.setChecked(false);
+        }
+        String curDay;
         Calendar c = Calendar.getInstance();
-        int today = c.get(Calendar.YEAR) * 10000 + c.get(Calendar.MONTH) * 100 + c.get(Calendar.DAY_OF_MONTH);
+        int today = c.get(Calendar.YEAR) * 10000 + (c.get(Calendar.MONTH) +1)* 100 + c.get(Calendar.DAY_OF_MONTH);
         if (list.getDay() == today) {
-            day = "今天";
+            curDay = "今天";
         } else if (list.getDay() == today + 1) {
-            day = "明天";
+            curDay = "明天";
+        } else if (list.getDay() / 10000 == c.get(Calendar.YEAR)) {
+            curDay = String.valueOf(list.getDay()).substring(4, 6) + "月"
+                    + String.valueOf(list.getDay()).substring(6, 8) + "日";
         } else {
-            day = list.getDay() + "";
+            curDay = String.valueOf(list.getDay()).substring(0, 4) + "年"
+                    + String.valueOf(list.getDay()).substring(4, 6) + "月"
+                    + String.valueOf(list.getDay()).substring(6, 8) + "日";
         }
         //在list视图sumFinish显示当前时间
         String hour = list.getTime() / 100 > 9 ? (list.getTime() / 100 + "") : ("0" + list.getTime() / 100);
         String min = list.getTime() % 100 > 9 ? (list.getTime() % 100 + "") : ("0" + list.getTime() % 100);
         sumFinish.setText(hour + ":" + min);
-        this.day.setText(day);
+        day.setText(curDay);
 
     }
 

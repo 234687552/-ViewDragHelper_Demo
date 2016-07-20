@@ -1,8 +1,26 @@
 最终效果：
 
-![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0719pm.gif "github")
+![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0720.gif "github")
 
 历史效果图在screenshots文件夹中
+
+7/20
+
+新加需求：
+	划分已完成和完成部分
+	
+新问题：
+	当项目条目过多的时候，采用上下两个Listview来划分完成是否的 效果不好，主要是listview自身有滚动
+	导致两个listview都各自上下滚动。
+分析:
+	采用scrollView包含两个Listview，并把两个Listview长度固定；
+	
+老问题：
+	新添加的Item不可以马上进行滑动处理，要重新进入别的界面回来才可以
+	
+7.19的新问题解决：
+	dialogFragment里面的内容填充逻辑有误；
+	
 
 7/19.PM
 
