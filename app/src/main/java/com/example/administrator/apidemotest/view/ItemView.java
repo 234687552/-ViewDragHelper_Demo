@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,13 +48,13 @@ public class ItemView extends LinearLayout implements View.OnTouchListener {
 
     public ItemView(Context context) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.item_view, this);
+        LayoutInflater.from(context).inflate(R.layout.view_item, this);
         init();
     }
 
     public ItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        LayoutInflater.from(context).inflate(R.layout.item_view, this);
+        LayoutInflater.from(context).inflate(R.layout.view_item, this);
         init();
     }
 

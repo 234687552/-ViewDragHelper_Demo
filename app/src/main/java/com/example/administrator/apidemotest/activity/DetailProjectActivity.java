@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -25,6 +26,7 @@ import com.example.administrator.apidemotest.model.Project;
 import com.example.administrator.apidemotest.model.ProjectList;
 import com.example.administrator.apidemotest.view.ItemView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -45,25 +47,35 @@ public class DetailProjectActivity extends Activity {
     private EditText listInput;
     private List<ProjectList> lists;
     private ImageView dataPicker;
+    private ViewPager container;
+    private List<View> pageViews;
+    private View frameLists;
+    private View frameConversation;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detail_project);
+        setContentView(R.layout.activity_detail);
         //进入记录今天时间
         Calendar c = Calendar.getInstance();
         today = c.get(Calendar.YEAR) * 10000 +(c.get(Calendar.MONTH)+1) * 100 + c.get(Calendar.DAY_OF_MONTH);
 
         db = new ProjectDb(this);
         dialog = new TypeDialog();
-        newSchedule = (ImageView) findViewById(R.id.new_list);
-        detailList = (ListView) findViewById(R.id.detail_list);
-        detailIcon = (ImageView) findViewById(R.id.detail_icon);
+
         detailProject = (EditText) findViewById(R.id.detail_project);
-        listInput = (EditText) findViewById(R.id.list_input);
         dataPicker = (ImageView) findViewById(R.id.data_picker);
+        container = (ViewPager) findViewById(R.id.container);
+        detailIcon = (ImageView) findViewById(R.id.detail_icon);
+
+        frameLists= LayoutInflater.from(this).inflate(R.layout.frame_lists,null);
+        frameConversation= LayoutInflater.from(this).inflate(R.layout.frame_coversation, null);
+        newSchedule = (ImageView) frameLists.findViewById(R.id.new_list);
+        detailList = (ListView) frameLists.findViewById(R.id.detail_list);
+        listInput = (EditText) frameLists.findViewById(R.id.list_input);
+
         init();
     }
 
@@ -88,6 +100,31 @@ public class DetailProjectActivity extends Activity {
                 break;
         }
         detailIcon.setBackgroundResource(resourceId);
+
+        //viewpager 设置 坐标为list清单列表，右边为聊天；
+
+        pageViews=new ArrayList<View>();
+        pageViews.add(frameLists);
+        pageViews.add(frameConversation);
+        PagerAdapter pagerAdapter = new PagerAdapter() {
+
+            @Override
+            public int getCount() {
+                return 2;
+            }
+
+            @Override
+            public boolean isViewFromObject(View view, Object object) {
+                return view == object;
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                ((ViewPager) container).addView(pageViews.get(position));
+                return pageViews.get(position);
+            }
+        };
+        container.setAdapter(pagerAdapter);
         //listview设置
         lists = db.getProjectLists(projectId);
         adapter = new MyAdapter(this, lists);

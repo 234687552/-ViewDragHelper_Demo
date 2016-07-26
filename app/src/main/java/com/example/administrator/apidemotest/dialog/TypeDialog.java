@@ -1,17 +1,14 @@
 package com.example.administrator.apidemotest.dialog;
 
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.administrator.apidemotest.R;
 
@@ -58,7 +55,7 @@ public  class TypeDialog extends DialogFragment implements View.OnClickListener 
         getDialog().getWindow().setBackgroundDrawable(new
                 ColorDrawable(Color.TRANSPARENT));
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = inflater.inflate(R.layout.type_dialog, container);
+        View view = inflater.inflate(R.layout.dialog_type, container);
         typeAll = (ImageView) view.findViewById(R.id.type_all);
         typeStudy = (ImageView) view.findViewById(R.id.type_study);
         typeWork = (ImageView) view.findViewById(R.id.type_work);

@@ -1,11 +1,8 @@
 package com.example.administrator.apidemotest.dialog;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +62,7 @@ public class EditDialog extends DialogFragment {
         db = new ProjectDb(getActivity());
         curList = db.getList(listId);
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = inflater.inflate(R.layout.edit_dialog, container);
+        View view = inflater.inflate(R.layout.dialog_edit, container);
         save = (ImageView) view.findViewById(R.id.save);
         listText = (EditText) view.findViewById(R.id.list_text);
         listRemark = (EditText) view.findViewById(R.id.list_remark);
