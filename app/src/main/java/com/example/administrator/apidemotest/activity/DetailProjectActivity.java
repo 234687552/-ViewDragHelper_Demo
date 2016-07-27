@@ -159,7 +159,7 @@ public class DetailProjectActivity extends Activity {
                     displayFinishDetails.setText("隐藏已完成项目");
                 }else {
                     finishDetails.setVisibility(View.GONE);
-                    displayFinishDetails.setText("显示已完成项目");
+                    displayFinishDetails.setText("显示已完成项目"+finishLists.size());
                 }
             }
         });
@@ -243,7 +243,7 @@ public class DetailProjectActivity extends Activity {
     public void onBackPressed() {
         if (!TextUtils.isEmpty(detailProject.getText())) {
             curProject.setProjectText(String.valueOf(detailProject.getText()));
-            curProject.setIs_finish(lists.size()==0?0:1);
+            curProject.setIs_finish(lists.size()==0?curProject.getIs_finish():1);
             for (int i = 0; i < lists.size(); i++) {
                 if (lists.get(i).getIs_finish()==0){
                     curProject.setIs_finish(0);

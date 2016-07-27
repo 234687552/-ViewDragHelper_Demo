@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     displayFinish.setText("隐藏已完成项目");
                 }else {
                     finishList.setVisibility(View.GONE);
-                    displayFinish.setText("显示已完成项目");
+                    displayFinish.setText("显示已完成项目"+finishProjects.size());
                 }
             }
         });
