@@ -136,12 +136,12 @@ public class ProjectDb {
     }
 
     /**
-     * 根据project_id读取所有的list
+     * 根据project_id和完成与否读取所有的list
      */
-    public List<ProjectList> getProjectLists(int project_id){
+    public List<ProjectList> getProjectLists(int projectId,int isFinish){
         List<ProjectList> projectLists=new ArrayList<ProjectList>();
 
-        Cursor cursor = db.query("List", null, "project_id=?", new String[]{String.valueOf(project_id)}, null, null, "is_finish,day,time");
+        Cursor cursor = db.query("List", null, "project_id=? and is_finish=?", new String[]{String.valueOf(projectId),String.valueOf(isFinish)}, null, null, "time");
         if (cursor.moveToFirst()){
             do {
                 ProjectList list=new ProjectList();

@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +69,13 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.list_view);
         adapter=new MyAdapter(MainActivity.this, projects);
         listView.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(listView);
         // 显示已经完成项目
         finishProjects=db.getProjects(selectType,FINISH);
         finishList = (ListView) findViewById(R.id.finish_list);
         finishAdapter=new MyAdapter(MainActivity.this, finishProjects);
         finishList.setAdapter(finishAdapter);
+        setListViewHeightBasedOnChildren(finishList);
         //切换显示和隐藏已完成项目
         displayFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,9 +124,12 @@ public class MainActivity extends AppCompatActivity {
         projects.clear();
         projects.addAll(db.getProjects(selectType, UNFINISH));
         adapter.notifyDataSetChanged();
+        setListViewHeightBasedOnChildren(listView);
         finishProjects.clear();
-        finishProjects.addAll(db.getProjects(selectType,FINISH));
+        finishProjects.addAll(db.getProjects(selectType, FINISH));
         finishAdapter.notifyDataSetChanged();
+        setListViewHeightBasedOnChildren(finishList);
+
 
     }
     private class MyAdapter extends BaseAdapter {
@@ -157,15 +166,13 @@ public class MainActivity extends AppCompatActivity {
             }
             view.setProject(projects.get(position));
             //获取porject下面的清单完成条数；
-            final List<ProjectList> lists = db.getProjectLists(projects.get(position).getId());
-            if (lists.size()==0){
+            final List<ProjectList> finishLists = db.getProjectLists(projects.get(position).getId(),FINISH);
+            final List<ProjectList> unfinishLists = db.getProjectLists(projects.get(position).getId(),UNFINISH);
+
+            if (finishLists.size()+unfinishLists.size()==0){
                 view.sumFinish.setText("");
             }else {
-                int countFinish=0;
-                for (ProjectList list : lists) {
-                    countFinish=list.getIs_finish()==FINISH?countFinish+1:countFinish;
-                }
-                view.sumFinish.setText(countFinish+"/"+lists.size());
+                view.sumFinish.setText(finishLists.size()+"/"+unfinishLists.size());
             }
 
 
@@ -173,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
             view.setOnExpandListener(new ItemView.OnExpandListener() {
                 @Override
                 public void ExpandListener(boolean isExpand) {
+
                     for (int i = 0; i < 20; i++) {
                         if (null != ((ItemView) listView.getChildAt(i))) {
                             ((ItemView) listView.getChildAt(i)).openItem = isExpand ? view : null;
@@ -199,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     projects.get(position).setIs_finish(FINISH);
                     db.updateProject(projects.get(position).getId(), projects.get(position));
                     refreshProject();
-                    for (ProjectList list : lists) {
+                    for (ProjectList list : unfinishLists) {
                         list.setIs_finish(FINISH);
                         db.updateProjectList(list.getId(), list);
                     }
@@ -208,6 +216,24 @@ public class MainActivity extends AppCompatActivity {
             return view;
         }
 
+    }
+
+    public void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
 }

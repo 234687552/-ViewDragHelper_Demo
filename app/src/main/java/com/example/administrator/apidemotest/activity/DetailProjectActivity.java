@@ -15,7 +15,9 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.apidemotest.R;
@@ -34,6 +36,9 @@ import java.util.List;
  * Created by Administrator on 2016/7/11 0011.
  */
 public class DetailProjectActivity extends Activity {
+    private static final int FINISH=1;
+    private static final int UNFINISH=0;
+
     private ListView detailList;
     private MyAdapter adapter;
     private ImageView newSchedule;
@@ -51,6 +56,14 @@ public class DetailProjectActivity extends Activity {
     private List<View> pageViews;
     private View frameLists;
     private View frameConversation;
+
+    private TextView displayFinishDetails;
+
+    private List<ProjectList> finishLists;
+    private ListView finishDetails;
+    private MyAdapter finishAdapter;
+
+
 
 
 
@@ -73,8 +86,10 @@ public class DetailProjectActivity extends Activity {
         frameLists= LayoutInflater.from(this).inflate(R.layout.frame_lists,null);
         frameConversation= LayoutInflater.from(this).inflate(R.layout.frame_coversation, null);
         newSchedule = (ImageView) frameLists.findViewById(R.id.new_list);
-        detailList = (ListView) frameLists.findViewById(R.id.detail_list);
+        detailList = (ListView) frameLists.findViewById(R.id.details_list);
         listInput = (EditText) frameLists.findViewById(R.id.list_input);
+        displayFinishDetails = (TextView) frameLists.findViewById(R.id.display_finish_details);
+        finishDetails = (ListView) frameLists.findViewById(R.id.finish_details);
 
         init();
     }
@@ -125,10 +140,29 @@ public class DetailProjectActivity extends Activity {
             }
         };
         container.setAdapter(pagerAdapter);
-        //listview设置
-        lists = db.getProjectLists(projectId);
+        //未完成listview设置
+        lists = db.getProjectLists(projectId,UNFINISH);
         adapter = new MyAdapter(this, lists);
         detailList.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(detailList);
+         //完成listview设置
+        finishLists = db.getProjectLists(projectId,FINISH);
+        finishAdapter = new MyAdapter(this, finishLists);
+        finishDetails.setAdapter(finishAdapter);
+        setListViewHeightBasedOnChildren(finishDetails);
+        //切换显示和隐藏已完成项目
+        displayFinishDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (finishDetails.getVisibility()==View.GONE){
+                    finishDetails.setVisibility(View.VISIBLE);
+                    displayFinishDetails.setText("隐藏已完成项目");
+                }else {
+                    finishDetails.setVisibility(View.GONE);
+                    displayFinishDetails.setText("显示已完成项目");
+                }
+            }
+        });
         //新建一个清单；
         newSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,12 +221,21 @@ public class DetailProjectActivity extends Activity {
                 dpd.show();
             }
         });
+
+
     }
 
     private void refreshList() {
         lists.clear();
-        lists.addAll(db.getProjectLists(projectId));
+        lists.addAll(db.getProjectLists(projectId, UNFINISH));
         adapter.notifyDataSetChanged();
+        setListViewHeightBasedOnChildren(detailList);
+
+        finishLists.clear();
+        finishLists.addAll(db.getProjectLists(projectId,FINISH));
+        finishAdapter.notifyDataSetChanged();
+        setListViewHeightBasedOnChildren(finishDetails);
+
     }
 
     //退出的时候自动保存
@@ -200,7 +243,7 @@ public class DetailProjectActivity extends Activity {
     public void onBackPressed() {
         if (!TextUtils.isEmpty(detailProject.getText())) {
             curProject.setProjectText(String.valueOf(detailProject.getText()));
-            curProject.setIs_finish(1);
+            curProject.setIs_finish(lists.size()==0?0:1);
             for (int i = 0; i < lists.size(); i++) {
                 if (lists.get(i).getIs_finish()==0){
                     curProject.setIs_finish(0);
@@ -285,6 +328,23 @@ public class DetailProjectActivity extends Activity {
             });
             return view;
         }
+    }
+    public void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+
+        int totalHeight = 0;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 }
 
