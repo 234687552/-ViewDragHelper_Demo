@@ -1,8 +1,15 @@
 最终效果：
 
-![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0720.gif "github")
+![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0729.gif "github")
 
 历史效果图在screenshots文件夹中
+
+7/29 
+
+新需求：
+	在项目清单上添加聊天界面
+	
+分析：利用 网上资源“环信”进行IM功能实现，大概框架如效果图中聊天界面 
 
 7/20
 

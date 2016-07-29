@@ -1,6 +1,7 @@
 package com.example.administrator.apidemotest.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -22,6 +23,8 @@ import com.example.administrator.apidemotest.db.ProjectDb;
 import com.example.administrator.apidemotest.model.Project;
 import com.example.administrator.apidemotest.model.ProjectList;
 import com.example.administrator.apidemotest.view.ItemView;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
 
 import java.util.Calendar;
 import java.util.List;
@@ -30,9 +33,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private ImageView newProject;
     private EditText projectInput;
-    private static  int FINISH=1;
-    private static  int UNFINISH=0;
-    private String selectType="所有";
+    private static int FINISH = 1;
+    private static int UNFINISH = 0;
+    private String selectType = "所有";
     private ListView listView;
     //未完成的所有projects
     private List<Project> projects;
@@ -45,7 +48,30 @@ public class MainActivity extends AppCompatActivity {
     private TextView displayFinish;
     private ListView finishList;
 
+    public void logout(View view) {
+        //此方法为异步方法
+        EMClient.getInstance().logout(false, new EMCallBack() {
 
+            @Override
+            public void onSuccess() {
+                // TODO Auto-generated method stub
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onProgress(int progress, String status) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void onError(int code, String message) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+    }
 
 
     @Override
@@ -60,32 +86,32 @@ public class MainActivity extends AppCompatActivity {
 
         //进入记录今天时间
         Calendar c = Calendar.getInstance();
-        today=c.get(Calendar.YEAR)*10000+(c.get(Calendar.MONTH)+1)*100+c.get(Calendar.DAY_OF_MONTH);
+        today = c.get(Calendar.YEAR) * 10000 + (c.get(Calendar.MONTH) + 1) * 100 + c.get(Calendar.DAY_OF_MONTH);
         //获取数据库操作
-        db=new ProjectDb(this);
+        db = new ProjectDb(this);
 
         // 显示未完成项目
-        projects=db.getProjects(selectType,UNFINISH);
+        projects = db.getProjects(selectType, UNFINISH);
         listView = (ListView) findViewById(R.id.list_view);
-        adapter=new MyAdapter(MainActivity.this, projects);
+        adapter = new MyAdapter(MainActivity.this, projects);
         listView.setAdapter(adapter);
         setListViewHeightBasedOnChildren(listView);
         // 显示已经完成项目
-        finishProjects=db.getProjects(selectType,FINISH);
+        finishProjects = db.getProjects(selectType, FINISH);
         finishList = (ListView) findViewById(R.id.finish_list);
-        finishAdapter=new MyAdapter(MainActivity.this, finishProjects);
+        finishAdapter = new MyAdapter(MainActivity.this, finishProjects);
         finishList.setAdapter(finishAdapter);
         setListViewHeightBasedOnChildren(finishList);
         //切换显示和隐藏已完成项目
         displayFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (finishList.getVisibility()==View.GONE){
+                if (finishList.getVisibility() == View.GONE) {
                     finishList.setVisibility(View.VISIBLE);
                     displayFinish.setText("隐藏已完成项目");
-                }else {
+                } else {
                     finishList.setVisibility(View.GONE);
-                    displayFinish.setText("显示已完成项目"+finishProjects.size());
+                    displayFinish.setText("显示已完成项目" + finishProjects.size());
                 }
             }
         });
@@ -120,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 根据类型刷新数据；
      */
-    private void refreshProject(){
+    private void refreshProject() {
         projects.clear();
         projects.addAll(db.getProjects(selectType, UNFINISH));
         adapter.notifyDataSetChanged();
@@ -132,13 +158,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     private class MyAdapter extends BaseAdapter {
         private Context mContext;
         private List<Project> projects;
-        public MyAdapter(Context context,List<Project> projects) {
+
+        public MyAdapter(Context context, List<Project> projects) {
             mContext = context;
-            this.projects=projects;
+            this.projects = projects;
         }
+
         @Override
         public int getCount() {
             return projects.size();
@@ -160,19 +189,18 @@ public class MainActivity extends AppCompatActivity {
             final ItemView view;
             if (convertView == null) {
                 view = new ItemView(mContext);
-            }
-            else {
-                view= (ItemView) convertView;
+            } else {
+                view = (ItemView) convertView;
             }
             view.setProject(projects.get(position));
             //获取porject下面的清单完成条数；
-            final List<ProjectList> finishLists = db.getProjectLists(projects.get(position).getId(),FINISH);
-            final List<ProjectList> unfinishLists = db.getProjectLists(projects.get(position).getId(),UNFINISH);
+            final List<ProjectList> finishLists = db.getProjectLists(projects.get(position).getId(), FINISH);
+            final List<ProjectList> unfinishLists = db.getProjectLists(projects.get(position).getId(), UNFINISH);
 
-            if (finishLists.size()+unfinishLists.size()==0){
+            if (finishLists.size() + unfinishLists.size() == 0) {
                 view.sumFinish.setText("");
-            }else {
-                view.sumFinish.setText(finishLists.size()+"/"+unfinishLists.size());
+            } else {
+                view.sumFinish.setText(finishLists.size() + "/" + unfinishLists.size());
             }
 
 

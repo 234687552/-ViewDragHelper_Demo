@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -26,7 +28,11 @@ import com.example.administrator.apidemotest.dialog.EditDialog;
 import com.example.administrator.apidemotest.dialog.TypeDialog;
 import com.example.administrator.apidemotest.model.Project;
 import com.example.administrator.apidemotest.model.ProjectList;
+import com.example.administrator.apidemotest.view.ConversationListView;
 import com.example.administrator.apidemotest.view.ItemView;
+import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMMessage;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,8 +42,9 @@ import java.util.List;
  * Created by Administrator on 2016/7/11 0011.
  */
 public class DetailProjectActivity extends Activity {
-    private static final int FINISH=1;
-    private static final int UNFINISH=0;
+    private static final String TAG = "DetailProjectActivity";
+    private static final int FINISH = 1;
+    private static final int UNFINISH = 0;
 
     private ListView detailList;
     private MyAdapter adapter;
@@ -64,7 +71,10 @@ public class DetailProjectActivity extends Activity {
     private MyAdapter finishAdapter;
 
 
+    private ConversationListView conversationList;
 
+    private TextView userName;
+    private EditText sendText;
 
 
     @Override
@@ -73,7 +83,7 @@ public class DetailProjectActivity extends Activity {
         setContentView(R.layout.activity_detail);
         //进入记录今天时间
         Calendar c = Calendar.getInstance();
-        today = c.get(Calendar.YEAR) * 10000 +(c.get(Calendar.MONTH)+1) * 100 + c.get(Calendar.DAY_OF_MONTH);
+        today = c.get(Calendar.YEAR) * 10000 + (c.get(Calendar.MONTH) + 1) * 100 + c.get(Calendar.DAY_OF_MONTH);
 
         db = new ProjectDb(this);
         dialog = new TypeDialog();
@@ -83,19 +93,34 @@ public class DetailProjectActivity extends Activity {
         container = (ViewPager) findViewById(R.id.container);
         detailIcon = (ImageView) findViewById(R.id.detail_icon);
 
-        frameLists= LayoutInflater.from(this).inflate(R.layout.frame_lists,null);
-        frameConversation= LayoutInflater.from(this).inflate(R.layout.frame_coversation, null);
+        frameLists = LayoutInflater.from(this).inflate(R.layout.frame_lists, null);
         newSchedule = (ImageView) frameLists.findViewById(R.id.new_list);
         detailList = (ListView) frameLists.findViewById(R.id.details_list);
         listInput = (EditText) frameLists.findViewById(R.id.list_input);
         displayFinishDetails = (TextView) frameLists.findViewById(R.id.display_finish_details);
         finishDetails = (ListView) frameLists.findViewById(R.id.finish_details);
 
+        frameConversation = LayoutInflater.from(this).inflate(R.layout.frame_coversation, null);
+        conversationList = (ConversationListView) frameConversation.findViewById(R.id.conversation_list);
+        conversationList.init("221619073581056428");
+        userName = (TextView) frameConversation.findViewById(R.id.user_name);
+        userName.setText(EMClient.getInstance().getCurrentUser());
+        sendText = (EditText) frameConversation.findViewById(R.id.send_text);
+
         init();
     }
 
+    public void send(View view) {
+        //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
+        EMMessage message = EMMessage.createTxtSendMessage(sendText.getText().toString().trim(), "221619073581056428");
+        message.setChatType(EMMessage.ChatType.GroupChat);
+        //发送消息
+        EMClient.getInstance().chatManager().sendMessage(message);
+        conversationList.refresh();
+    }
 
     private void init() {
+
         //title设置
         projectId = getIntent().getIntExtra("project_id", 0);
         curProject = db.getProject(projectId);
@@ -118,7 +143,7 @@ public class DetailProjectActivity extends Activity {
 
         //viewpager 设置 坐标为list清单列表，右边为聊天；
 
-        pageViews=new ArrayList<View>();
+        pageViews = new ArrayList<View>();
         pageViews.add(frameLists);
         pageViews.add(frameConversation);
         PagerAdapter pagerAdapter = new PagerAdapter() {
@@ -141,12 +166,12 @@ public class DetailProjectActivity extends Activity {
         };
         container.setAdapter(pagerAdapter);
         //未完成listview设置
-        lists = db.getProjectLists(projectId,UNFINISH);
+        lists = db.getProjectLists(projectId, UNFINISH);
         adapter = new MyAdapter(this, lists);
         detailList.setAdapter(adapter);
         setListViewHeightBasedOnChildren(detailList);
-         //完成listview设置
-        finishLists = db.getProjectLists(projectId,FINISH);
+        //完成listview设置
+        finishLists = db.getProjectLists(projectId, FINISH);
         finishAdapter = new MyAdapter(this, finishLists);
         finishDetails.setAdapter(finishAdapter);
         setListViewHeightBasedOnChildren(finishDetails);
@@ -154,12 +179,12 @@ public class DetailProjectActivity extends Activity {
         displayFinishDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (finishDetails.getVisibility()==View.GONE){
+                if (finishDetails.getVisibility() == View.GONE) {
                     finishDetails.setVisibility(View.VISIBLE);
                     displayFinishDetails.setText("隐藏已完成项目");
-                }else {
+                } else {
                     finishDetails.setVisibility(View.GONE);
-                    displayFinishDetails.setText("显示已完成项目"+finishLists.size());
+                    displayFinishDetails.setText("显示已完成项目" + finishLists.size());
                 }
             }
         });
@@ -181,6 +206,7 @@ public class DetailProjectActivity extends Activity {
                 }
             }
         });
+
         //更改project的类型；
         detailIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,12 +238,12 @@ public class DetailProjectActivity extends Activity {
         dataPicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dpd=new DatePickerDialog(DetailProjectActivity.this, new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog dpd = new DatePickerDialog(DetailProjectActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        curProject.setDay(year*10000+(monthOfYear+1)*100+dayOfMonth);
+                        curProject.setDay(year * 10000 + (monthOfYear + 1) * 100 + dayOfMonth);
                     }
-                },curProject.getDay()/10000,curProject.getDay()%10000/100-1,curProject.getDay()%10000%100);
+                }, curProject.getDay() / 10000, curProject.getDay() % 10000 / 100 - 1, curProject.getDay() % 10000 % 100);
                 dpd.show();
             }
         });
@@ -225,6 +251,7 @@ public class DetailProjectActivity extends Activity {
 
     }
 
+    //刷新
     private void refreshList() {
         lists.clear();
         lists.addAll(db.getProjectLists(projectId, UNFINISH));
@@ -232,7 +259,7 @@ public class DetailProjectActivity extends Activity {
         setListViewHeightBasedOnChildren(detailList);
 
         finishLists.clear();
-        finishLists.addAll(db.getProjectLists(projectId,FINISH));
+        finishLists.addAll(db.getProjectLists(projectId, FINISH));
         finishAdapter.notifyDataSetChanged();
         setListViewHeightBasedOnChildren(finishDetails);
 
@@ -243,20 +270,21 @@ public class DetailProjectActivity extends Activity {
     public void onBackPressed() {
         if (!TextUtils.isEmpty(detailProject.getText())) {
             curProject.setProjectText(String.valueOf(detailProject.getText()));
-            curProject.setIs_finish(lists.size()==0?curProject.getIs_finish():1);
+            curProject.setIs_finish(lists.size() == 0 ? curProject.getIs_finish() : 1);
             for (int i = 0; i < lists.size(); i++) {
-                if (lists.get(i).getIs_finish()==0){
+                if (lists.get(i).getIs_finish() == 0) {
                     curProject.setIs_finish(0);
                 }
             }
             db.updateProject(projectId, curProject);
             super.onBackPressed();
-        }else {
+        } else {
             Toast.makeText(DetailProjectActivity.this, "请输入项目事项", Toast.LENGTH_SHORT).show();
         }
 
     }
 
+    //details里的adapter
     private class MyAdapter extends BaseAdapter {
         private Context mContext;
         private List<ProjectList> lists;
@@ -329,6 +357,8 @@ public class DetailProjectActivity extends Activity {
             return view;
         }
     }
+
+    //设置listview的高度不让其滚动
     public void setListViewHeightBasedOnChildren(ListView listView) {
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
@@ -346,5 +376,7 @@ public class DetailProjectActivity extends Activity {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
     }
+
+
 }
 

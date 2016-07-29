@@ -24,6 +24,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="清单列表|讨论记录"
+        android:textColor="#03a9f4" />
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"

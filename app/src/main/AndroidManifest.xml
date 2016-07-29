@@ -50,7 +50,7 @@
         </receiver>
 
 
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,6 +58,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.DetailProjectActivity" />
+        <activity android:name=".activity.MainActivity"/>
+        <activity android:name=".activity.TestActivity"/>
     </application>
 
 </manifest>
