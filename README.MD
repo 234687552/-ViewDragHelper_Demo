@@ -1,14 +1,28 @@
 最终效果：
 
-![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0731.gif "github")
+![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0801.gif "github")
 
 历史效果图在screenshots文件夹中
+
+8/1
+
+现在阶段：利用“环信”api添加了群聊即时聊天功能。
+下阶段：实现共享任务到群每一个成员.
+最后功能：owner领导任务并分配子任务清单；member各司其职，对任务每一个子任务进行处理共同完成任务。
+
+7/31 PM
+
+学习心得：
+	
+	1.Fragment中获取Activity的Context时只需要this.getActivity()即可.
+	2.DialogFragment 显示的大小太小，可在xml布局文件设定android:minWidth="400dp"来左右大小
 
 7/31
 
 新问题：
 
-	listview里adapter的notification要在ui线程，而adapter的数据更新要在新线程new Thread里，如果刷新数据过快会导致崩溃报错：
+listview里adapter的notification要在ui线程，而adapter的数据更新要在新线程new Thread里，如果刷新数据过快会导致崩溃报错：
+
 	The content of the adapter has changed but ListView did not receive a notification.
 	Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. 
 	

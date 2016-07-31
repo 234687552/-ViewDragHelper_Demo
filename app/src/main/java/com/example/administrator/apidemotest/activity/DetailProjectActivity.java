@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.administrator.apidemotest.R;
 import com.example.administrator.apidemotest.db.ProjectDb;
+import com.example.administrator.apidemotest.dialog.AddMemberDialog;
 import com.example.administrator.apidemotest.dialog.EditDialog;
 import com.example.administrator.apidemotest.dialog.TypeDialog;
 import com.example.administrator.apidemotest.model.Project;
@@ -53,6 +54,7 @@ public class DetailProjectActivity extends Activity {
     private Project curProject;
     private int projectId;
     private TypeDialog dialog;
+    private AddMemberDialog addMemberDialog;
     private int today;
     private EditText listInput;
     private List<ProjectList> lists;
@@ -92,7 +94,10 @@ public class DetailProjectActivity extends Activity {
 
         db = new ProjectDb(this);
         dialog = new TypeDialog();
-
+        addMemberDialog=new AddMemberDialog();
+        Bundle bundle = new Bundle();
+        bundle.putString("groupId", GROUPID);
+        addMemberDialog.setArguments(bundle);
         detailProject = (EditText) findViewById(R.id.detail_project);
         dataInfo = (ImageView) findViewById(R.id.data_info);
         container = (ViewPager) findViewById(R.id.container);
@@ -116,7 +121,11 @@ public class DetailProjectActivity extends Activity {
 
         init();
     }
-
+    //新加成员
+    public void addMember(View view){
+        addMemberDialog.show(getFragmentManager(),"AddMemberDialog");
+    }
+    //发送消息
     public void send(View view) {
         //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id
         EMMessage message = EMMessage.createTxtSendMessage(sendText.getText().toString().trim(), "221619073581056428");

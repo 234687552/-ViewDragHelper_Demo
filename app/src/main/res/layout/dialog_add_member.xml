@@ -2,42 +2,135 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <LinearLayout
-        android:layout_margin="5dp"
-        android:layout_width="0dp"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_height="match_parent">
-        <TextView
-            android:text="所有好友:"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ListView
-            android:id="@+id/all_friends"
-            android:background="@drawable/bg_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"></ListView>
-    </LinearLayout>
+    android:minHeight="400dp"
+    android:minWidth="400dp"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_margin="5dp"
-        android:layout_width="0dp"
-        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_height="match_parent">
-        <TextView
-            android:text="成员:"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ListView
-            android:id="@+id/exit_members"
-            android:background="@drawable/bg_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"></ListView>
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="所有好友:" />
+
+            <RelativeLayout
+                android:id="@+id/friends_progress"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_edit_text">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/friends_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_edit_text"
+                android:visibility="gone"></ListView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="已有成员:" />
+
+                <RelativeLayout
+                    android:id="@+id/members_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text">
+
+                    <ProgressBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+
+                <ListView
+                    android:id="@+id/members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"
+                    android:visibility="gone"></ListView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="新增成员:" />
+
+                <ListView
+                    android:id="@+id/new_members_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edit_text"></ListView>
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_margin="5dp"
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/sure"
+            android:background="@drawable/bg_edit_text"
+            android:text="取消" />
+
+        <Button
+            android:layout_margin="5dp"
+            android:id="@+id/sure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/bg_edit_text"
+            android:text="确定" />
+    </RelativeLayout>
 
 </LinearLayout>

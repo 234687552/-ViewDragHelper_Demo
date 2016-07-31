@@ -3,6 +3,7 @@ package com.example.administrator.apidemotest.dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import com.example.administrator.apidemotest.R;
 import com.example.administrator.apidemotest.db.ProjectDb;
 import com.example.administrator.apidemotest.model.ProjectList;
 
-//choose　type dialog
+//edit dialog
 public class EditDialog extends DialogFragment {
     private SaveListener listener;
     private ImageView save;
@@ -37,8 +38,18 @@ public class EditDialog extends DialogFragment {
         this.listener = listener;
     }
 
+
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        db = new ProjectDb(getActivity());
+        curList = db.getList(listId);
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+        View view = inflater.inflate(R.layout.dialog_edit, container);
+        save = (ImageView) view.findViewById(R.id.save);
+        listText = (EditText) view.findViewById(R.id.list_text);
+        listRemark = (EditText) view.findViewById(R.id.list_remark);
+
         String title = curList.getListText();
         String detail = curList.getRemark();
         listText.setText(title);
@@ -53,19 +64,6 @@ public class EditDialog extends DialogFragment {
                 dismiss();
             }
         });
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        db = new ProjectDb(getActivity());
-        curList = db.getList(listId);
-        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
-        View view = inflater.inflate(R.layout.dialog_edit, container);
-        save = (ImageView) view.findViewById(R.id.save);
-        listText = (EditText) view.findViewById(R.id.list_text);
-        listRemark = (EditText) view.findViewById(R.id.list_remark);
         return view;
     }
 
