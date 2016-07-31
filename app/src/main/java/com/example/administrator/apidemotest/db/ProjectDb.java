@@ -185,6 +185,7 @@ public class ProjectDb {
                 "day integer,"+
                 "is_finish integer,"+
                 "project_text text," +
+                "group_id text,"+
                 "type text)";
         //创建PROJECT_LIST表
         String CREATE_LIST = "create table List (" +

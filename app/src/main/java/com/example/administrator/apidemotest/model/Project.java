@@ -4,7 +4,6 @@ package com.example.administrator.apidemotest.model;
  * 临时data
  */
 public class Project {
-
     //日期 e.g 2016122
     private int  day;
 

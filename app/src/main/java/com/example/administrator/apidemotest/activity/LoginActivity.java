@@ -52,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if (EMClient.getInstance().isLoggedInBefore()){
-            Toast.makeText(LoginActivity.this, EMClient.getInstance().getCurrentUser(), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this,MainActivity.class));
             finish();
         }
@@ -109,12 +108,6 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent =new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(LoginActivity.this, (EMClient.getInstance().getCurrentUser()), Toast.LENGTH_SHORT).show();
-                        }
-                    });
                 }
                 @Override
                 public void onProgress(int progress, String status) {

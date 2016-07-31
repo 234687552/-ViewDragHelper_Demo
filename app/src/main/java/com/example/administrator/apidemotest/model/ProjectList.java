@@ -8,7 +8,6 @@ public class ProjectList {
     //日期 e.g 2016122
     private int  day;
     //清单备注
-
     public String getRemark() {
         return remark;
     }

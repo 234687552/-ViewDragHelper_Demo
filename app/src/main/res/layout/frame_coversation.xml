@@ -3,11 +3,20 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:id="@+id/frame_conversation"
     android:layout_height="match_parent">
-    <com.example.administrator.apidemotest.view.ConversationListView
-        android:id="@+id/conversation_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_weight="1"
-        android:layout_height="0dp"></com.example.administrator.apidemotest.view.ConversationListView>
+        android:layout_height="0dp"
+        >
+        <com.example.administrator.apidemotest.view.ConversationListView
+            android:id="@+id/conversation_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@android:color/transparent"
+            ></com.example.administrator.apidemotest.view.ConversationListView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"

@@ -1,8 +1,30 @@
 最终效果：
 
-![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0729.gif "github")
+![github](https://github.com/234687552/ProjectSchedule/blob/master/screenshots/0731.gif "github")
 
 历史效果图在screenshots文件夹中
+
+7/31
+
+新问题：
+
+	listview里adapter的notification要在ui线程，而adapter的数据更新要在新线程new Thread里，如果刷新数据过快会导致崩溃报错：
+	The content of the adapter has changed but ListView did not receive a notification.
+	Make sure the content of your adapter is not modified from a background thread, but only from the UI thread. 
+	
+问题分析：
+	
+	刷新过快，上一次线程的数据还没有notification，下一次线程刷新来了就会导致上述问题
+	
+解决办法：
+	
+	从线程新获得的新数据先传到主线程，不要直接在子线程中为其赋值。保证数据在ui线程刷新；
+	传输：msg.obj=tempDataList；
+	接受：dataList=msg.obj;
+
+参考网址：
+
+	http://www.eoeandroid.com/thread-79950-1-1.html
 
 7/29 
 

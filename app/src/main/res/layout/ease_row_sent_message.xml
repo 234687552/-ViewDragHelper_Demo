@@ -32,8 +32,6 @@
             android:id="@+id/bubble"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_userid"
-            android:layout_marginRight="5dp"
             android:layout_toLeftOf="@id/iv_userhead"
             android:background="@drawable/ease_chatto_bg">
 
@@ -53,16 +51,15 @@
                 android:textSize="15sp" />
         </RelativeLayout>
 
-        <TextView
-
-            android:id="@+id/tv_userid"
-            style="@style/chat_text_name_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp"
-            android:layout_toLeftOf="@id/iv_userhead"
-            android:text="xxx"
-            android:visibility="gone" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv_userid"-->
+            <!--style="@style/chat_text_name_style"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="15dp"-->
+            <!--android:layout_toLeftOf="@id/iv_userhead"-->
+            <!--android:text="xxx"-->
+            <!--android:visibility="gone" />-->
 
         <ImageView
             android:id="@+id/msg_status"
@@ -74,27 +71,6 @@
             android:src="@drawable/ease_msg_state_failed_resend"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tv_ack"
-            style="@style/chat_text_name_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/bubble"
-            android:text="Read"
-            android:textSize="12sp"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/tv_delivered"
-            style="@style/chat_text_name_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/bubble"
-            android:text="Delivered"
-            android:textSize="12sp"
-            android:visibility="invisible" />
 
         <ProgressBar
             android:id="@+id/progress_bar"

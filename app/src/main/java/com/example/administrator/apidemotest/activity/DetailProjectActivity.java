@@ -1,22 +1,20 @@
 package com.example.administrator.apidemotest.activity;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,7 +28,6 @@ import com.example.administrator.apidemotest.model.Project;
 import com.example.administrator.apidemotest.model.ProjectList;
 import com.example.administrator.apidemotest.view.ConversationListView;
 import com.example.administrator.apidemotest.view.ItemView;
-import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
 
@@ -46,6 +43,7 @@ public class DetailProjectActivity extends Activity {
     private static final int FINISH = 1;
     private static final int UNFINISH = 0;
 
+    private String GROUPID;
     private ListView detailList;
     private MyAdapter adapter;
     private ImageView newSchedule;
@@ -58,7 +56,7 @@ public class DetailProjectActivity extends Activity {
     private int today;
     private EditText listInput;
     private List<ProjectList> lists;
-    private ImageView dataPicker;
+    private ImageView dataInfo;
     private ViewPager container;
     private List<View> pageViews;
     private View frameLists;
@@ -70,17 +68,24 @@ public class DetailProjectActivity extends Activity {
     private ListView finishDetails;
     private MyAdapter finishAdapter;
 
+    private SwipeRefreshLayout swipeRefresh;
+
 
     private ConversationListView conversationList;
 
     private TextView userName;
     private EditText sendText;
 
+    private LinearLayout dataProject;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        GROUPID="221619073581056428";
         //进入记录今天时间
         Calendar c = Calendar.getInstance();
         today = c.get(Calendar.YEAR) * 10000 + (c.get(Calendar.MONTH) + 1) * 100 + c.get(Calendar.DAY_OF_MONTH);
@@ -89,9 +94,10 @@ public class DetailProjectActivity extends Activity {
         dialog = new TypeDialog();
 
         detailProject = (EditText) findViewById(R.id.detail_project);
-        dataPicker = (ImageView) findViewById(R.id.data_picker);
+        dataInfo = (ImageView) findViewById(R.id.data_info);
         container = (ViewPager) findViewById(R.id.container);
         detailIcon = (ImageView) findViewById(R.id.detail_icon);
+        dataProject = (LinearLayout) findViewById(R.id.data_project);
 
         frameLists = LayoutInflater.from(this).inflate(R.layout.frame_lists, null);
         newSchedule = (ImageView) frameLists.findViewById(R.id.new_list);
@@ -101,8 +107,9 @@ public class DetailProjectActivity extends Activity {
         finishDetails = (ListView) frameLists.findViewById(R.id.finish_details);
 
         frameConversation = LayoutInflater.from(this).inflate(R.layout.frame_coversation, null);
+        swipeRefresh = (SwipeRefreshLayout) frameConversation.findViewById(R.id.swipe_refresh);
         conversationList = (ConversationListView) frameConversation.findViewById(R.id.conversation_list);
-        conversationList.init("221619073581056428");
+        conversationList.init(GROUPID);
         userName = (TextView) frameConversation.findViewById(R.id.user_name);
         userName.setText(EMClient.getInstance().getCurrentUser());
         sendText = (EditText) frameConversation.findViewById(R.id.send_text);
@@ -111,16 +118,24 @@ public class DetailProjectActivity extends Activity {
     }
 
     public void send(View view) {
-        //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
+        //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id
         EMMessage message = EMMessage.createTxtSendMessage(sendText.getText().toString().trim(), "221619073581056428");
         message.setChatType(EMMessage.ChatType.GroupChat);
         //发送消息
         EMClient.getInstance().chatManager().sendMessage(message);
+        sendText.setText("");
         conversationList.refresh();
     }
 
     private void init() {
-
+        //对话列表下滑刷新
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                conversationList.refreshWithoutSink();
+                swipeRefresh.setRefreshing(false);
+            }
+        });
         //title设置
         projectId = getIntent().getIntExtra("project_id", 0);
         curProject = db.getProject(projectId);
@@ -165,6 +180,22 @@ public class DetailProjectActivity extends Activity {
             }
         };
         container.setAdapter(pagerAdapter);
+        container.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                conversationList.refresh();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         //未完成listview设置
         lists = db.getProjectLists(projectId, UNFINISH);
         adapter = new MyAdapter(this, lists);
@@ -235,16 +266,18 @@ public class DetailProjectActivity extends Activity {
                 });
             }
         });
-        dataPicker.setOnClickListener(new View.OnClickListener() {
+        dataInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerDialog dpd = new DatePickerDialog(DetailProjectActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        curProject.setDay(year * 10000 + (monthOfYear + 1) * 100 + dayOfMonth);
-                    }
-                }, curProject.getDay() / 10000, curProject.getDay() % 10000 / 100 - 1, curProject.getDay() % 10000 % 100);
-                dpd.show();
+//                DatePickerDialog dpd = new DatePickerDialog(DetailProjectActivity.this, new DatePickerDialog.OnDateSetListener() {
+//                    @Override
+//                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                        curProject.setDay(year * 10000 + (monthOfYear + 1) * 100 + dayOfMonth);
+//                    }
+//                }, curProject.getDay() / 10000, curProject.getDay() % 10000 / 100 - 1, curProject.getDay() % 10000 % 100);
+//                dpd.show();
+                dataProject.setVisibility(dataProject.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                dataInfo.setBackgroundResource(dataProject.getVisibility() == View.VISIBLE ?R.mipmap.data_info_press:R.mipmap.data_info);
             }
         });
 
